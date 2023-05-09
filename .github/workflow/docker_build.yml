@@ -1,0 +1,39 @@
+# GitHub Actionsのワークフロー名を設定
+name: Docker Build Test
+
+# ワークフローをトリガーする条件を設定
+on:
+  push:
+    branches:
+      - main # メインブランチへのプッシュでトリガー
+  pull_request:
+    branches:
+      - main # メインブランチへのプルリクエストでトリガー
+
+# ジョブの定義
+jobs:
+  build:
+    runs-on: ubuntu-latest # 実行環境を最新のUbuntuに設定
+
+    steps:
+    - name: Checkout repository # リポジトリのソースコードを取得
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx # Docker Buildxをセットアップ
+      uses: docker/setup-buildx-action@v1
+
+    - name: Cache Docker layers # Dockerレイヤーのキャッシュを設定
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
+    - name: Build Docker image # Dockerイメージのビルド
+      uses: docker/build-push-action@v2
+      with:
+        context: . # ビルドコンテキストをリポジトリのルートに設定
+        push: false # DockerHubへのPushを行わない
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache
