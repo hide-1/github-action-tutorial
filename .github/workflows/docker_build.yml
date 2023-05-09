@@ -5,10 +5,10 @@ name: Docker Build Test
 on:
   push:
     branches:
-      - main # メインブランチへのプッシュでトリガー
+      - master # メインブランチへのプッシュでトリガー
   pull_request:
     branches:
-      - main # メインブランチへのプルリクエストでトリガー
+      - master # メインブランチへのプルリクエストでトリガー
 
 # ジョブの定義
 jobs:
